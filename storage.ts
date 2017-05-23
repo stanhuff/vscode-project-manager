@@ -7,22 +7,33 @@ export interface Project {
   rootPath: string; // the root path of this project
   paths: string[];  // the 'other paths' when you have multifolder project
   group: string;    // the group(s) that it belongs to
+  terminals: ProjectTerminal[];     // the list of terminals to open when the project loads
 };
+
+export interface ProjectTerminal {
+    /** Name to display on the terminal window */
+    name?: string;
+
+    /** Text to send to the terminal window */
+    cmd?: string;
+}
 
 export interface ProjectList extends Array<Project> {};
 
 class ProjectItem implements Project {
     
-    public name: string;     // the name that the user defines for the project
+    public name: string;                    // the name that the user defines for the project
     public rootPath: string; // the root path of this project
     public paths: string[];  // the 'other paths' when you have multifolder project
     public group: string;    // the group(s) that it belongs to
+    public terminals: ProjectTerminal[];
 
     constructor(pname: string, prootPath: string) {
         this.name = pname;
         this.rootPath = prootPath;
         this.paths = [];
         this.group = "";
+        this.terminals = [];
     }
 }
 

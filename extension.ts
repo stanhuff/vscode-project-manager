@@ -54,6 +54,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     let statusItem: vscode.StatusBarItem;
     showStatusBar();
+    openTerminals();
     
     // function commands
     function showStatusBar(projectName?: string) {
@@ -84,6 +85,31 @@ export function activate(context: vscode.ExtensionContext) {
         if (foundProject) {
             statusItem.text += foundProject.name;
             statusItem.show();
+        }
+    }
+    
+    /**
+     * Optionally open any project defined terminals.
+     */
+    function openTerminals() {
+        let currentProjectPath = vscode.workspace.rootPath;
+        let foundProject: Project = projectStorage.existsWithRootPath(PathUtils.compactHomePath(currentProjectPath));
+        if (foundProject && foundProject.terminals && foundProject.terminals.length) {
+            
+            vscode.window.showInformationMessage("This project defines terminal windows to open.", "Open them?")
+                .then(value => {
+                    if (value === "Open them?") {
+                        let shown = false;
+                        for (const terminal of foundProject.terminals) {
+                            const terminalWindow = vscode.window.createTerminal(terminal.name);
+                            terminalWindow.sendText(terminal.cmd);
+                            if (!shown) {
+                                shown = true;
+                                terminalWindow.show(true);
+                            }                            
+                        }
+                    }
+                });        
         }
     }
 
